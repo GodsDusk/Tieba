@@ -20,17 +20,16 @@ PAGE_NUM = 50
 
 def welcomeInterface():
 	print u"""欢迎使用贴吧搜(人)索(肉)机,作者:%s\n注:\n\t1.代码执行期间可用Ctrl+C强行终止\n\t2.程序使用多线程查询,因此搜索结果并不完全按时间排列"""%__author__
-	if platform.system().upper() == 'WINDOWS': '''fuck windows'''
-	'''transform to gbk'''
-			tiebaName = urllib.quote(raw_input(unicode('输入贴吧名:','utf-8').encode('gbk')))
-			IDName = urllib.unquote(urllib.quote(raw_input(unicode("输入查询ID:",'utf-8').encode('gbk')).decode('gbk').encode('utf-8')))
-			pageNum = range(int(raw_input(unicode("输入查询页数:",'utf-8').encode('gbk'))))
-			downloadPrompt = unicode("输入‘yes’下载所有网页到本地,其他任意键退出:",'utf-8').encode('gbk')
+	if platform.system().upper() == 'WINDOWS': #transform to gbk ,fuck windows
+		tiebaName = urllib.quote(raw_input(unicode('输入贴吧名:','utf-8').encode('gbk')))
+		IDName = urllib.unquote(urllib.quote(raw_input(unicode("输入查询ID:",'utf-8').encode('gbk')).decode('gbk').encode('utf-8')))
+		pageNum = range(int(raw_input(unicode("输入查询页数:",'utf-8').encode('gbk'))))
+		downloadPrompt = unicode("输入‘yes’下载所有网页到本地,其他任意键退出:",'utf-8').encode('gbk')
 	else:
- 			tiebaName = raw_input("输入贴吧名:")
-			IDName = raw_input("输入查询ID:")
-			pageNum = range(int(raw_input("输入查询页数:")))
-			downloadPrompt = "输入‘yes’下载所有网页到本地,其他任意键退出:"
+		tiebaName = raw_input("输入贴吧名:")
+		IDName = raw_input("输入查询ID:")
+		pageNum = range(int(raw_input("输入查询页数:")))
+		downloadPrompt = "输入‘yes’下载所有网页到本地,其他任意键退出:"
 	return tiebaName, IDName, pageNum, downloadPrompt
 
 
