@@ -5,6 +5,7 @@ import itertools
 import platform
 import urllib
 from multiprocessing import Pool, freeze_support
+import re
 
 import requests
 from bs4 import BeautifulSoup 
@@ -16,21 +17,30 @@ sys.setdefaultencoding('utf8')
 
 __author__ = 'Gods_Dusk'
 
-PAGE_NUM = 50
+PAGE_NUM = 50 #50 posts per page
+baseURL = 'http://tieba.baidu.com'
 
 def welcomeInterface():
 	print u"""欢迎使用贴吧搜(人)索(肉)机,作者:%s\n注:\n\t1.代码执行期间可用Ctrl+C强行终止\n\t2.程序使用多线程查询,因此搜索结果并不完全按时间排列"""%__author__
-	if platform.system().upper() == 'WINDOWS': #transform to gbk ,fuck windows
+	if platform.system().upper() == 'WINDOWS': #transform to gbk, fuck windows
 		tiebaName = urllib.quote(raw_input(unicode('输入贴吧名:','utf-8').encode('gbk')))
 		IDName = urllib.unquote(urllib.quote(raw_input(unicode("输入查询ID:",'utf-8').encode('gbk')).decode('gbk').encode('utf-8')))
-		pageNum = range(int(raw_input(unicode("输入查询页数:",'utf-8').encode('gbk'))))
+		pageNumRange = raw_input(unicode("输入查询页数;输入回车将查询所有页面:",'utf-8').encode('gbk'))
 		downloadPrompt = unicode("输入‘yes’下载所有网页到本地,其他任意键退出:",'utf-8').encode('gbk')
 	else:
 		tiebaName = raw_input("输入贴吧名:")
 		IDName = raw_input("输入查询ID:")
-		pageNum = range(int(raw_input("输入查询页数:")))
+		pageNumRange = raw_input("输入查询页数;输入回车将查询所有页面:")
 		downloadPrompt = "输入‘yes’下载所有网页到本地,其他任意键退出:"
-	return tiebaName, IDName, pageNum, downloadPrompt
+
+	return tiebaName, IDName, pageNumRange, downloadPrompt
+
+def getLastPagination(url):
+
+	r = requests.get(url)
+	soup = BeautifulSoup(r.text,"html.parser")
+
+	return re.search('pn=\d+',str(soup.find_all("a",string = u'\u5c3e\u9875'))).group()
 
 
 def funcConvert(a_b):
@@ -41,20 +51,20 @@ def tiebaWebCrawler(pageNum,imformation):
 
 	fid = open(imformation[u'fileName'], 'a')
 
-	url = 'http://tieba.baidu.com/f?kw=' + imformation[u'tiebaName'] + '&ie=utf-8&pn=' + str(PAGE_NUM*pageNum)		
+	url = baseURL + '/f?kw=' + imformation[u'tiebaName'] + '&ie=utf-8&pn=' + str(PAGE_NUM*pageNum) 		
 	r = requests.get(url)
 
 	soup = BeautifulSoup(r.text, "html.parser")
 
 	for _text_ in soup.find_all(title = "主题作者: " + imformation[u'IDName'] ):
-		fid.write(str(_text_.parent.parent.find('a')) + '\n')
+		fid.write('<p>' + str(_text_.parent.parent.find('a')).replace("href=\"","href=\"" + baseURL) + '</p>' + '\n')
 
 	fid.close()
 		
 def downloadURL(fileName):
 	
 	starTime = time.time()
-	url = 'http://tieba.baidu.com'
+	
 	fid = open(fileName, 'r')
 
 	soup = BeautifulSoup(fid.read(), "html.parser")
@@ -65,7 +75,7 @@ def downloadURL(fileName):
 		else:
 			saveFileName = link.get(u'title')
 		fidHtml = open(str(saveFileName)+'.html', 'w')
-		url = 'http://tieba.baidu.com' + str(link.get('href'))
+		url = baseURL + str(link.get('href'))
 		fidHtml.write(requests.get(url).text)
 		fidHtml.close()
 	print u"下载完成,耗时:%f秒"%(time.time()-starTime)
@@ -73,12 +83,23 @@ def downloadURL(fileName):
 
 if __name__ == '__main__':
 
-	tiebaName, IDName, pageNum, downloadPrompt = welcomeInterface()
+	tiebaName, IDName, pageNumRange, downloadPrompt = welcomeInterface()
 
 	pool = Pool(4)
 
 	starTime = time.time()
-	fileName = str(starTime) + '.txt'
+	
+	fileName = str(starTime) + '.html'
+	fileHead = open(fileName, 'w')
+	fileHead.write('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />')
+	fileHead.close()
+
+	if pageNumRange.isdigit():
+		pageNum = range(int(pageNumRange))
+	else: 
+		number = filter(str.isdigit, getLastPagination(baseURL + '/f?ie=utf-8&kw=' + tiebaName))
+		pageNum = range(int(number)/PAGE_NUM + 1)
+
 
 	second_arg = {'tiebaName':tiebaName, 'IDName':IDName, 'fileName':fileName}
 	pool.map(funcConvert, itertools.izip(pageNum, itertools.repeat(second_arg)))
@@ -87,7 +108,6 @@ if __name__ == '__main__':
 
 	if raw_input(downloadPrompt) == 'yes':
 		downloadURL(fileName)
-
 
 
 	
