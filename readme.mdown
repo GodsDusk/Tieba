@@ -11,6 +11,7 @@ tieba_WebCrawler.py -- 用遍历的方法搜索某ID在某贴吧发的主题帖
 
 blockList -- 删封ID样例，参数说明见：http://tieba.baidu.com/p/3995155161
 
+---
 
 [^f1]: 需要大吧主权限
 [^f2]: 需要吧务权限 
