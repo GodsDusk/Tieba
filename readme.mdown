@@ -1,8 +1,6 @@
 #基本功能#
 addBlack.py -- 将用户加入黑名单[^f1]
 
-[^f1]: 需要大吧主权限
-
 fuckRobot.py -- 限制发帖时间与等级，查询首页每帖最后一页，将满足限制的用户封禁并删帖[^f2]
 	
 postSave.py -- 保存帖子到本地，帖子存在多页的则将其合并成一页
@@ -11,9 +9,9 @@ testTBS.py -- 手工获取能够循环封禁某用户的tbs[^f2]
 
 tieba_WebCrawler.py -- 用遍历的方法搜索某ID在某贴吧发的主题帖
 
-blockList -- 删封ID样例，参数说明见：http://tieba.baidu.com/p/3995155161
+blockList -- 删封ID样例，[参数说明点此](http://tieba.baidu.com/p/3995155161)
 
 ---
 
-
+[^f1]: 需要大吧主权限
 [^f2]: 需要吧务权限 
