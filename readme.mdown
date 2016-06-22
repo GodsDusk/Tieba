@@ -9,9 +9,14 @@ testTBS.py -- 手工获取能够循环封禁某用户的tbs[^f2]
 
 tieba_WebCrawler.py -- 用遍历的方法搜索某ID在某贴吧发的主题帖
 
+tieBaPostDelete.py -- 根据关键字或用户删帖并保存记录[^f2]
+
 blockList -- 删封ID样例，[参数说明点此](http://tieba.baidu.com/p/3995155161)
+
+deleteRule -- 删帖规则[^f3]
 
 ---
 
 [^f1]: 需要大吧主权限
 [^f2]: 需要吧务权限 
+[^f3]: 需要了解正则表达式
